@@ -6,14 +6,6 @@ class Solution {
     public int solution(int n, int s, int a, int b, int[][] fares) {
         int answer = Integer.MAX_VALUE;
         map = new HashMap<>();
-        Arrays.stream(fares).forEach(fare -> {
-            map.put(fare[0], new ArrayList<>());
-            map.put(fare[1], new ArrayList<>());
-        });
-        Arrays.stream(fares).forEach(fare -> {
-            map.get(fare[0]).add(new Edge(fare[1], fare[2]));
-            map.get(fare[1]).add(new Edge(fare[0], fare[2]));
-        });
         for(int[] fare : fares){
             map.putIfAbsent(fare[0], new ArrayList<>());
             map.putIfAbsent(fare[1], new ArrayList<>());
@@ -29,7 +21,7 @@ class Solution {
         dijkstra(s, startS);
         dijkstra(a, startA);
         dijkstra(b, startB);
-        for(int i=0; i < n+1; i++){
+        for(int i=1; i < n+1; i++){
             answer = Math.min(answer, startS[i] + startA[i] + startB[i]);
         }
         return answer;
@@ -41,6 +33,9 @@ class Solution {
         dp[start] = 0;
         while(!pq.isEmpty()){
             Edge path = pq.poll();
+            if(dp[path.end] < path.weight){
+                continue;
+            }
             for(Edge edge : map.get(path.end)){
                 if(dp[edge.end] > dp[path.end] + edge.weight){
                     dp[edge.end] = dp[path.end] + edge.weight;
